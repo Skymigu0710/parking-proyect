@@ -53,6 +53,7 @@ public class AbonadoService {
                         .nombre(t.getNombre())
                         .placa(t.getPlaca())
                         .celular(t.getCelular())
+                        .afiliaciones(t.getAfiliaciones())
                         .build())
                 .collect(Collectors.toList());
     }

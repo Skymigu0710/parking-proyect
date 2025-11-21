@@ -1,5 +1,6 @@
 package com.project.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class Afiliacion {
 
     @ManyToOne
     @JoinColumn(name = "abonado_id")
+    @JsonIgnore
     private Abonado abonado;
 
     private LocalDate fechaInicio;

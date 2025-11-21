@@ -59,7 +59,7 @@ public class AbonadoController {
         return ResponseEntity.ok(abonadoResponse);
     }
     @GetMapping("/getAbonados")
-    public List<AbonadoRequest> getAllAboandos() {
+    public List<AbonadoRequest> getAllAbonados() {
         return abonadoService.getAllAbonados();
     }
     @DeleteMapping("/{id}")
