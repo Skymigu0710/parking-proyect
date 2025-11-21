@@ -92,12 +92,15 @@ public class TicketService {
         ticketRepository.save(ticket);
 
         return TicketResponse.builder()
+                .id(ticket.getId())
                 .licensePlate(ticket.getVehicle().getLicensePlate())
                 .type(ticket.getVehicle().getType().name())
                 .entryTime(ticket.getEntryTime())
                 .exitTime(ticket.getExitTime())
                 .totalAmount(ticket.getTotalAmount())
                 .status(ticket.getStatus().name())
+                .detalle(ticket.getDetalle())
+                .createdBy(ticket.getCreatedBy().getName())
                 .build();
     }
   /*  public TicketResponse registerSpecialTicket(VehicleEntryRequest request, double manualAmount) {

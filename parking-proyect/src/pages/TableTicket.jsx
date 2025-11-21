@@ -20,7 +20,7 @@ export default function TableTicket() {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full border border-gray-300 rounded-lg">
-        <thead className="bg-blue-600 text-white">
+        <thead className="bg-black  text-white">
           <tr>
             <th className="px-4 py-2 text-left">Id</th>
             <th className="px-4 py-2 text-left">Placa</th>

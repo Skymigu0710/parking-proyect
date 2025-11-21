@@ -52,7 +52,7 @@ export default function TicketDetail() {
     const handlePay = async () => {
         const token = localStorage.getItem("token");
 
-        if (!ticket || ticket.status === "Pagado") return;
+        if (!ticket || ticket.status === "CLOSED") return;
 
         try {
             setPagar(true);
@@ -67,7 +67,7 @@ export default function TicketDetail() {
             if (!res.ok) throw new Error("No se pudo procesar el pago");
 
             const updatedTicket = await res.json();
-            setTicket(updatedTicket); // Actualiza el estado local
+            setTicket(updatedTicket);
             alert(" Ticket pagado correctamente");
         } catch (err) {
             alert(" Error: " + err.message);
@@ -101,40 +101,48 @@ export default function TicketDetail() {
     }
 
     return (
-        <div className="max-w-lg mx-auto mt-6 p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-blue-600">Detalles del Ticket</h2>
-            <div className="space-y-2">
-                <p><strong>ID:</strong> {ticket.id}</p>
-                <p><strong>Placa:</strong> {ticket.licensePlate}</p>
-                <p><strong>Tipo:</strong> {ticket.type}</p>
-                <p><strong>Hora de ingreso:</strong> {ticket.entryTime}</p>
-                <p><strong>Hora de salida:</strong> {ticket.exitTime ?? "En curso"}</p>
-                <p><strong>Monto total:</strong> {ticket.totalAmount ?? "—"}</p>
-                <p><strong>Estado:</strong> {ticket.status}</p>
-                <p><strong>Detalle:</strong> {ticket.detalle}</p>
-                <p><strong>Creado por:</strong> {ticket.createdBy}</p>
-            </div>
+        <div className="flex justify-center items-center h-screen bg-gray-100">
 
-            <div className="flex justify-between mt-6">
-                <button
-                    onClick={handlePay}
-                    disabled={ticket.status === "Pagado" || pagar}
-                    className={`px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-blue-600 transition ${ticket.status === "Pagado"
+            <div className=" relative bg-white rounded-lg shadow-lg p-6 max-w-lg w-[90%]">
+
+                <div className="absolute top-1/2 -left-3 w-6 h-6 bg-gray-100 rounded-full transform -translate-y-1/2 shadow-inner"></div>
+                <div className="absolute top-1/2 -right-3 w-6 h-6 bg-gray-100 rounded-full transform -translate-y-1/2 shadow-inner"></div>
+
+                <h2 className="text-2xl font-bold mb-2 text-[#D62828]">Detalles del Ticket</h2>
+                <div className="border-t border-dashed border-gray-400 my-4"></div>
+                <div className="space-y-2">
+                    <p><strong>ID:</strong> {ticket.id}</p>
+                    <p><strong>Placa:</strong> {ticket.licensePlate}</p>
+                    <p><strong>Tipo:</strong> {ticket.type}</p>
+                    <p><strong>Hora de ingreso:</strong> {ticket.entryTime}</p>
+                    <p><strong>Hora de salida:</strong> {ticket.exitTime ?? "En curso"}</p>
+                    <p><strong>Monto total:</strong> {ticket.totalAmount ?? "—"}</p>
+                    <p><strong>Estado:</strong> {ticket.status}</p>
+                    <p><strong>Detalle:</strong> {ticket.detalle}</p>
+                    <p><strong>Creado por:</strong> {ticket.createdBy}</p>
+                </div>
+
+                <div className="flex justify-between mt-6">
+                    <button
+                        onClick={handlePay}
+                        disabled={ticket.status === "CLOSED" || pagar}
+                        className={`px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-blue-600 transition ${ticket.status === "Pagado"
                             ? "bg-green-500 cursor-not-allowed"
                             : "bg-blue-500 hover:bg-blue-600"
-                        }`}
-                > {pagar
-                    ? "Procesando..."
-                    : ticket.status === "Pagado"
-                        ? "Pagado"
-                        : "Pagar"}
-                </button>
-                <button
-                    onClick={() => navigate(-1)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-                >
-                    Volver
-                </button>
+                            }`}
+                    > {pagar
+                        ? "Procesando..."
+                        : ticket.status === "CLOSED"
+                            ? "Pagado"
+                            : "Pagar"}
+                    </button>
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                    >
+                        Volver
+                    </button>
+                </div>
             </div>
         </div>
     );
