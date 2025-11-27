@@ -27,6 +27,7 @@ public class AfiliacionService {
         nueva.setFechaInicio(request.getFechaInicio() != null ? request.getFechaInicio() : LocalDate.now());
         nueva.setFechaFin(request.getFechaFin()); // puede ser null si no se quiere establecer aún
         nueva.setMonto(request.getMonto());
+
         nueva.setActiva(true);
 
         Afiliacion guardada = afiliacionRepository.save(nueva);

@@ -10,7 +10,7 @@ export default function Profile() {
         // Llamada al backend
         const fetchAbonado = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/abonados/${id}`);
+                const res = await fetch(`http://localhost:8080/api/abonado/${id}`);
                 if (res.ok) {
                     const data = await res.json();
                     setAbonado(data);
@@ -27,42 +27,6 @@ export default function Profile() {
     }
 
 
-    // Estado para alternar entre vista y edición
-    const [isEditing, setIsEditing] = useState(false);
-
-    // Estado de los datos del perfil
-    const [profile, setProfile] = useState({
-        nombre: "Ruth Alata Roman",
-        correo: "ruthalataroman@gmail.com",
-        contraseña: "**********",
-        telefono: "99999",
-    });
-
-    // Manejar cambios en los inputs
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setProfile({ ...profile, [name]: value });
-    };
-
-    // Guardar cambios (simula envío al backend)
-    /* const handleSave = async () => {
-       setIsEditing(false);
-       try {
-         const response = await fetch("http://localhost:8080/api/usuarios/actualizar", {
-           method: "PUT",
-           headers: { "Content-Type": "application/json" },
-           body: JSON.stringify(profile),
-         });
-         if (response.ok) {
-           alert("Perfil actualizado correctamente ✅");
-         } else {
-           alert("Error al actualizar el perfil ❌");
-         }
-       } catch (error) {
-         console.error("Error:", error);
-         alert("No se pudo conectar con el servidor");
-       }
-     };*/
 
     return (
         <div className="min-h-screen bg-gray-200">

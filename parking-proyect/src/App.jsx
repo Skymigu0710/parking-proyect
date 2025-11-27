@@ -20,7 +20,7 @@ function App() {
         <Route path="/special" element={<TableTicket />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/ticket/:id" element={<ProfileTicket />} />
-        <Route path="/profileAbon" element={<ProfileAbonados />} />
+        <Route path="/abonado/:id" element={<ProfileAbonados />} />
       </Routes>
     </Router>
   )

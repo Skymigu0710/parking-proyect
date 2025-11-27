@@ -243,6 +243,11 @@ function Abonados() {
               value={monto}
               onChange={(e) => setMonto(e.target.value)}
             />
+            <label className="block mb-1 text-sm font-semibold">Meses afiliados</label>
+            <input
+              type="number"
+              className="border p-2 rounded-md w-full mb-4"
+            />
 
             <div className="flex justify-between mt-2">
               <button

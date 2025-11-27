@@ -1,5 +1,6 @@
 package com.project.models;
 
+ import com.fasterxml.jackson.annotation.JsonIgnore;
  import jakarta.persistence.*;
  import lombok.*;
 
@@ -19,8 +20,9 @@ public class PagoMensual {
     private int mes;   // cada numero representa al mes del añoo
     private int año;
     private double monto;
-
+    private boolean pagado;
     @ManyToOne
     @JoinColumn(name = "afiliacion_id")
+    @JsonIgnore
     private Afiliacion afiliacion;
 }
