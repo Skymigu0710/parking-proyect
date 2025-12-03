@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface PagoMensualRepository extends JpaRepository<PagoMensual, Long> {
     boolean existsByAfiliacionIdAndMesAndAño(Long afiliacionId, int mes, int año);
-    Optional<PagoMensual> findByAfiliacionIdAndMesAndAño(Long afiliacionId, int mes, int año);
+    Optional<PagoMensual> findById(Long afiliacionId);
 }

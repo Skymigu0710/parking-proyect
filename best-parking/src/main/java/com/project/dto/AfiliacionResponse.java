@@ -12,5 +12,6 @@ public class AfiliacionResponse {
     private String fechaInicio;
     private String fechaFin;
     private boolean activa;
+    private int mes;
     private double monto;
 }

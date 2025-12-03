@@ -28,13 +28,9 @@ public class PagoController {
     }
 
     // Confirmar pago
-    @PutMapping("/confirmar")
-    public ResponseEntity<PagoMensual> confirmarPago(@RequestBody PagoMensual request) {
-        PagoMensual pago = pagoService.confirmarPago(
-                request.getAfiliacion().getId(),
-                request.getMes(),
-                request.getAño()
-        );
+    @PutMapping("/confirmar/{pagoId}")
+    public ResponseEntity<PagoMensual> confirmarPago(@PathVariable Long pagoId) {
+        PagoMensual pago = pagoService.confirmarPago(pagoId);
         return ResponseEntity.ok(pago);
     }
 

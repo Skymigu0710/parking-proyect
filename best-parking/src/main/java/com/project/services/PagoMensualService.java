@@ -33,8 +33,8 @@ public class PagoMensualService {
         }
     }
 
-    public PagoMensual confirmarPago(Long afiliacionId, int mes, int año) {
-        PagoMensual pago = pagoMensualRepository.findByAfiliacionIdAndMesAndAño(afiliacionId, mes, año)
+    public PagoMensual confirmarPago(Long pagoId) {
+        PagoMensual pago = pagoMensualRepository.findById(pagoId)
                 .orElseThrow(() -> new RuntimeException("Pago no definido para este mes"));
 
         if (pago.isPagado()) {

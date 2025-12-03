@@ -27,7 +27,7 @@ public class Afiliacion {
 
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
-
+    private int mes;
     private boolean activa;
     private double monto;
     // Relación con pagos mensuales

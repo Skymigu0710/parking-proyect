@@ -34,6 +34,7 @@ public class AbonadoController {
     public AfiliacionResponse StartAfiliacion(@RequestBody AfiliacionRequest request) {
         return afiliacionService.afiliar(request);
     }
+
     @PostMapping("/desafiliar/{abonadoId}")
     public AfiliacionResponse desafiliar(
             @PathVariable Long abonadoId,
@@ -52,6 +53,9 @@ public class AbonadoController {
         AbonadoRequest abonadoResponse= AbonadoRequest.builder()
                 .id(abonado.getId())
                 .nombre(abonado.getNombre())
+                .placa(abonado.getPlaca())
+                .celular(abonado.getCelular())
+                .afiliaciones(abonado.getAfiliaciones())
                 .build();
         return ResponseEntity.ok(abonadoResponse);
     }

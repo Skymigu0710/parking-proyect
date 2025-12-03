@@ -17,6 +17,7 @@ public class AfiliacionService {
 
     private final AbonadoRepository abonado_r;
     private final AfiliacionRepository afiliacionRepository;
+    private final PagoMensualService pagoMensualService;
 
     public AfiliacionResponse afiliar(AfiliacionRequest request) {
         Abonado abonado = abonado_r.findById(request.getAbonadoId())
@@ -26,17 +27,25 @@ public class AfiliacionService {
         nueva.setAbonado(abonado);
         nueva.setFechaInicio(request.getFechaInicio() != null ? request.getFechaInicio() : LocalDate.now());
         nueva.setFechaFin(request.getFechaFin()); // puede ser null si no se quiere establecer aún
+        nueva.setMes(request.getMes());
         nueva.setMonto(request.getMonto());
-
         nueva.setActiva(true);
 
         Afiliacion guardada = afiliacionRepository.save(nueva);
+        int añoInicio= guardada.getFechaInicio().getYear();
+        pagoMensualService.definirCuotas(
+                guardada.getId(),
+                guardada.getMonto(),
+                guardada.getMes(),
+                añoInicio
+        );
 
         return AfiliacionResponse.builder()
                 .id(guardada.getId())
                 .fechaInicio(guardada.getFechaInicio().toString())
                 .fechaFin(guardada.getFechaFin() != null ? guardada.getFechaFin().toString() : null)
                 .activa(guardada.isActiva())
+                .mes(guardada.getMes())
                 .monto(guardada.getMonto())
                 .build();
     }

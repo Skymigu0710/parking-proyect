@@ -12,6 +12,7 @@ function Abonados() {
   const [abonadoSeleccionado, setAbonadoSeleccionado] = useState(null);
   const [fechaInicio, setFechaInicio] = useState("");
   const [monto, setMonto] = useState("");
+  const [mes, setMes] = useState("");
 
 
   const openModal = (id) => {
@@ -98,6 +99,7 @@ function Abonados() {
         body: JSON.stringify({
           abonadoId: abonadoSeleccionado,
           fechaInicio,
+          mes,
           monto,
         }),
       });
@@ -247,6 +249,8 @@ function Abonados() {
             <input
               type="number"
               className="border p-2 rounded-md w-full mb-4"
+              value={mes}
+               onChange={(e) => setMes(e.target.value)}
             />
 
             <div className="flex justify-between mt-2">
