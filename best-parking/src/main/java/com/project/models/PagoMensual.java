@@ -4,6 +4,8 @@ package com.project.models;
  import jakarta.persistence.*;
  import lombok.*;
 
+ import java.time.LocalDate;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,6 +23,8 @@ public class PagoMensual {
     private int año;
     private double monto;
     private boolean pagado;
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
     @ManyToOne
     @JoinColumn(name = "afiliacion_id")
     @JsonIgnore

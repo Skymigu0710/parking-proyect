@@ -5,6 +5,7 @@ export default function ParkingTicket() {
 
 
   const [pagoAdelantado, setPagoAdelantado] = useState(false);
+  
   const handleCheckboxChange = (event) => {
     setPagoAdelantado(event.target.checked);
   };
@@ -18,31 +19,35 @@ export default function ParkingTicket() {
   const [plate, setPlate] = useState("");
   const [color, setColor] = useState("");
   const [spaceCount, setSpaceCount] = useState("");
-  const [discountAmount, setsdiscountAmount] = useState("");
+  const [descuento, setDescuento] = useState("");
   const [detalle, setDetalle] = useState("");
+  const [horas, setHoras] = useState('');
 
   const handleTicket = async (e) => {
     e.preventDefault();
 
-    
-  const token = localStorage.getItem("token");
+
+    const token = localStorage.getItem("token");
     if (!token) {
-    console.error("No se encontró token. El usuario no está autenticado.");
-    return;
-  }
+      console.error("No se encontró token. El usuario no está autenticado.");
+      return;
+    }
     try {
       const response = await fetch("http://localhost:8080/api/tickets/entry", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-           "Authorization": `Bearer ${token}` 
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
           licensePlate: plate,
           color: color,
           type: type,
           spaceCount: spaceCount,
-          discountAmount: 0.0,
+          pagoAdelantado: pagoAdelantado,
+          horas: pagoAdelantado ? Number(horas) : null,
+          exitTime: pagoAdelantado ? (horas) : null,
+          discountAmount: pagoAdelantado ? Number(descuento) : 0,
           detalle: detalle
         })
       });
@@ -130,11 +135,15 @@ export default function ParkingTicket() {
             <h1>Horas</h1>
             <input
               type="text"
+              value={horas}
+              onChange={(e) => setHoras(e.target.value)}
               className="w-auto border border-gray-300"
             />
             <h1>*Descuento</h1>
             <input
               type="text"
+              value={descuento}
+              onChange={(e) => setDescuento(e.target.value)}
               className="w-auto border border-gray-300"
             />
           </div>

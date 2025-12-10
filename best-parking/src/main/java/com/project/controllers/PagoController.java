@@ -20,9 +20,7 @@ public class PagoController {
     public ResponseEntity<String> definirCuotas(@RequestBody CuotaRequest request) {
         pagoService.definirCuotas(
                 request.getAfiliacionId(),
-                request.getMontoMensual(),
-                request.getMeses(),
-                request.getAñoInicio()
+                request.getMontoMensual()
         );
         return ResponseEntity.ok("Cuotas definidas correctamente");
     }

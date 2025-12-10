@@ -53,13 +53,31 @@ public class TicketService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        LocalDateTime entrada= LocalDateTime.now();
 
+        LocalDateTime exit=null;
+        Double monto = null;
+
+        // Si es pago adelantado → calcular monto
+        if (request.isPagoAdelantado()) {
+            if (request.getHoras() == 0) {
+                throw new RuntimeException("Debe ingresar horas si es pago adelantado");
+            }
+            exit = calcularHoraSalida(entrada, request.getHoras());
+
+            monto = calculateFee(vehicle, entrada, exit) - request.getDiscountAmount();
+            if (monto < 0) monto = 0.0;
+        }
         Ticket ticket = Ticket.builder()
                 .vehicle(vehicle)
                 .entryTime(LocalDateTime.now())
+                .exitTime(exit)
                 .status(TicketStatus.ACTIVE)
                 .discountAmount(request.getDiscountAmount())
                 .detalle(request.getDetalle())
+                .horas(request.getHoras())
+                .pagoAdelantado(request.isPagoAdelantado())
+                .totalAmount(monto)
                 .createdBy(user)
                 .build();
 
@@ -69,8 +87,11 @@ public class TicketService {
                 .licensePlate(vehicle.getLicensePlate())
                 .type(vehicle.getType().name())
                 .entryTime(ticket.getEntryTime())
+                .exitTime(ticket.getExitTime())
                 .status(ticket.getStatus().name())
                 .detalle(ticket.getDetalle())
+                .horas(ticket.getHoras())
+                .totalAmount(ticket.getTotalAmount())
                 .createdBy(user.getUsername())
                 .build();
     }
@@ -85,10 +106,10 @@ public class TicketService {
         if (ticket.getDiscountAmount() != null && ticket.getDiscountAmount() > 0) {
             amount -= ticket.getDiscountAmount();
         }
-
+        int horas= horas(ticket.getEntryTime(), ticket.getExitTime());
         ticket.setTotalAmount(Math.max(amount, 0)); // avoid negatives
         ticket.setStatus(TicketStatus.CLOSED);
-
+        ticket.setHoras(horas);
         ticketRepository.save(ticket);
 
         return TicketResponse.builder()
@@ -100,6 +121,7 @@ public class TicketService {
                 .totalAmount(ticket.getTotalAmount())
                 .status(ticket.getStatus().name())
                 .detalle(ticket.getDetalle())
+                .horas(ticket.getHoras())
                 .createdBy(ticket.getCreatedBy().getName())
                 .build();
     }
@@ -139,8 +161,7 @@ public class TicketService {
                 .build();
     }*/
     private double calculateFee(Vehicle v, LocalDateTime entry, LocalDateTime exit) {
-        long minutes = Duration.between(entry, exit).toMinutes();
-        double hours = Math.ceil(minutes / 60.0);
+        double hours = horas(entry,exit);
 
         double rate;
         switch (v.getType()) {
@@ -151,7 +172,23 @@ public class TicketService {
         }
         return hours * rate;
     }
+    private int horas(LocalDateTime entry, LocalDateTime exit) {
+        long minutes = Duration.between(entry, exit).toMinutes();
 
+        int hours = (int) (minutes / 60);        // Horas completas
+        long extraMinutes = minutes % 60;        // Minutos sobrantes
+
+        // Regla personalizada:
+        // Si pasa de 6 minutos → subir 1 hora más
+        if (extraMinutes > 5) {
+            hours++;
+        }
+
+        return Math.max(hours, 1); // mínimo 1 hora
+    }
+    public LocalDateTime calcularHoraSalida(LocalDateTime horaEntrada, int horasSeleccionadas) {
+        return horaEntrada.plusHours(horasSeleccionadas);
+    }
     public List<TicketResponse> listAllTickets() {
         return ticketRepository.findAll()
                 .stream()

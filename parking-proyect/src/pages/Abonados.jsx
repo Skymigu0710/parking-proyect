@@ -11,6 +11,7 @@ function Abonados() {
   const [animateModal, setAnimateModal] = useState(false);
   const [abonadoSeleccionado, setAbonadoSeleccionado] = useState(null);
   const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
   const [monto, setMonto] = useState("");
   const [mes, setMes] = useState("");
 
@@ -25,6 +26,7 @@ function Abonados() {
     setTimeout(() => {
       setShowModal(false);
       setFechaInicio("");
+      setFechaFin("");
       setMonto("");
     }, 300);
   };
@@ -99,6 +101,7 @@ function Abonados() {
         body: JSON.stringify({
           abonadoId: abonadoSeleccionado,
           fechaInicio,
+          fechaFin,
           mes,
           monto,
         }),
@@ -180,9 +183,9 @@ function Abonados() {
         </div>
 
         {/* Tabla de abonados */}
-        <table className="w-full bg-white rounded-lg shadow-md text-sm">
+        <table className="w-full bg-white rounded-lg shadow-md text-sm " >
           <thead>
-            <tr className="bg-gray-200 text-gray-600">
+            <tr className="bg-black text-white">
               <th className="p-2 text-left">Nombre</th>
               <th className="p-2 text-left">Placa</th>
               <th className="p-2 text-left">Celular</th>
@@ -197,6 +200,7 @@ function Abonados() {
                 <tr
                   key={a.id}
                   className="border-b hover:bg-gray-100 cursor-pointer"
+                  onClick={() => navigate(`/abonado/${a.id}`)}
                 >
                   <td className="p-2">{a.nombre}</td>
                   <td className="p-2">{a.placa}</td>
@@ -237,20 +241,19 @@ function Abonados() {
               value={fechaInicio}
               onChange={(e) => setFechaInicio(e.target.value)}
             />
-
+            <label className="block mb-1 text-sm ">Fecha Fin</label>
+            <input
+              type="date"
+              className="border p-2 rounded-md w-full mb-3"
+              value={fechaFin}
+              onChange={(e) => setFechaFin(e.target.value)}
+            />
             <label className="block mb-1 text-sm font-semibold">Monto</label>
             <input
               type="number"
               className="border p-2 rounded-md w-full mb-4"
               value={monto}
               onChange={(e) => setMonto(e.target.value)}
-            />
-            <label className="block mb-1 text-sm font-semibold">Meses afiliados</label>
-            <input
-              type="number"
-              className="border p-2 rounded-md w-full mb-4"
-              value={mes}
-               onChange={(e) => setMes(e.target.value)}
             />
 
             <div className="flex justify-between mt-2">

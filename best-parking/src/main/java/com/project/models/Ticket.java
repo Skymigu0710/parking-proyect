@@ -33,8 +33,9 @@ public class Ticket {
     private TicketStatus status;
 
     private boolean specialTicket=false;
-
+    private boolean pagoAdelantado=false;
     private String detalle;
+    private int horas;
 
     @ManyToOne
     @JoinColumn(name = "created_by")

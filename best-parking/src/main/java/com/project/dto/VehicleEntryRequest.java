@@ -11,5 +11,7 @@ public class VehicleEntryRequest {
     private String type; // MOTORCYCLE, CAR, LARGE, CAMIONETA
     private int spaceCount = 1;
     private Double discountAmount; //optional
+    private int horas;
     private String detalle;
+    private boolean pagoAdelantado;
 }

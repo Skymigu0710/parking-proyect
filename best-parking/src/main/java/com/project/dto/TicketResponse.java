@@ -17,5 +17,6 @@ public class TicketResponse {
     private Double totalAmount;
     private String status;
     private String detalle;
+    private int horas;
     private String createdBy;
 }

@@ -4,12 +4,15 @@ import com.project.dto.AfiliacionRequest;
 import com.project.dto.AfiliacionResponse;
 import com.project.models.Abonado;
 import com.project.models.Afiliacion;
+import com.project.models.PagoMensual;
 import com.project.repositories.AbonadoRepository;
 import com.project.repositories.AfiliacionRepository;
+import com.project.repositories.PagoMensualRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -22,22 +25,19 @@ public class AfiliacionService {
     public AfiliacionResponse afiliar(AfiliacionRequest request) {
         Abonado abonado = abonado_r.findById(request.getAbonadoId())
                 .orElseThrow(() -> new RuntimeException("Abonado no encontrado"));
-
+        int meses= calcularMeses(request.getFechaInicio(), request.getFechaFin());
         Afiliacion nueva = new Afiliacion();
         nueva.setAbonado(abonado);
         nueva.setFechaInicio(request.getFechaInicio() != null ? request.getFechaInicio() : LocalDate.now());
         nueva.setFechaFin(request.getFechaFin()); // puede ser null si no se quiere establecer aún
-        nueva.setMes(request.getMes());
+        nueva.setMes(meses);
         nueva.setMonto(request.getMonto());
         nueva.setActiva(true);
 
         Afiliacion guardada = afiliacionRepository.save(nueva);
-        int añoInicio= guardada.getFechaInicio().getYear();
         pagoMensualService.definirCuotas(
                 guardada.getId(),
-                guardada.getMonto(),
-                guardada.getMes(),
-                añoInicio
+                guardada.getMonto()
         );
 
         return AfiliacionResponse.builder()
@@ -67,4 +67,10 @@ public class AfiliacionService {
                 .activa(guardada.isActiva())
                 .build();
     }
+    private int calcularMeses(LocalDate inicio, LocalDate fin) {
+        if (fin == null) return 1; // o lo que tú decidas si no tiene fin
+
+        return (int) ChronoUnit.MONTHS.between(inicio, fin) + 1;
+    }
+
 }

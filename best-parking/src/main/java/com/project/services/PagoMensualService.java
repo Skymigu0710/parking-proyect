@@ -8,6 +8,8 @@ import com.project.repositories.PagoMensualRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 @RequiredArgsConstructor
 public class PagoMensualService {
@@ -15,21 +17,37 @@ public class PagoMensualService {
     private final AfiliacionRepository afiliacionRepository;
 
     //definir cuotas para una afiliación
-    public void definirCuotas(Long afiliacionId, double montoMensual, int meses, int añoInicio) {
+    public void definirCuotas(Long afiliacionId, double montoMensual) {
         Afiliacion afiliacion = afiliacionRepository.findById(afiliacionId)
                 .orElseThrow(() -> new RuntimeException("Afiliación no encontrada"));
 
-        for (int i = 1; i <= meses; i++) {
-            int mes = i;
-            // Evitar duplicados
-            if (!pagoMensualRepository.existsByAfiliacionIdAndMesAndAño(afiliacionId, mes, añoInicio)) {
+        LocalDate inicio = afiliacion.getFechaInicio();
+        LocalDate fin = afiliacion.getFechaFin();
+        LocalDate fechaActual = inicio;
+        int contadorCuotas = 1;
+        while (!fechaActual.isAfter(fin)) {
+
+            LocalDate fechaSiguiente = fechaActual.plusMonths(1);
+
+            // Ajustar si el último mes excede la fechaFin
+            if (fechaSiguiente.isAfter(fin)) {
+                fechaSiguiente = fin;
+            }
+
+            // Evitar duplicados por número de cuota
+            if (!pagoMensualRepository.existsByAfiliacionIdAndMes(afiliacionId, contadorCuotas)) {
                 PagoMensual pago = new PagoMensual();
                 pago.setAfiliacion(afiliacion);
-                pago.setMes(mes);
-                pago.setAño(añoInicio);
+                pago.setMes(contadorCuotas);
+                pago.setFechaInicio(fechaActual);
+                pago.setFechaFin(fechaSiguiente);
                 pago.setMonto(montoMensual);
+
                 pagoMensualRepository.save(pago);
             }
+
+            fechaActual = fechaSiguiente;  // <── ESTA ES LA CORRECCIÓN CLAVE
+            contadorCuotas++;
         }
     }
 
