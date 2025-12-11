@@ -43,6 +43,9 @@ public class SecurityConfig {
                                   corsConfig.setAllowedHeaders(List.of("*"));
                                   return corsConfig;
                       }   ))
+              .sessionManagement(session ->
+                      session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+              )
               .authorizeHttpRequests(auth -> auth
                       .requestMatchers("/api/auth/**").permitAll() // Debe estar permitido
                       .requestMatchers("/api/tickets/**").authenticated()

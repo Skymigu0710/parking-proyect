@@ -19,4 +19,5 @@ public class TicketResponse {
     private String detalle;
     private int horas;
     private String createdBy;
+    private String qrBase64;
 }

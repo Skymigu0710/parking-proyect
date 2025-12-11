@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,11 +27,12 @@ public class TicketService {
     private final VehicleRepository vehicleRepository;
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
-
-    public TicketService(VehicleRepository vehicleRepository, TicketRepository ticketRepository, UserRepository userRepository) {
+    private final QrService qrService;
+    public TicketService(VehicleRepository vehicleRepository, TicketRepository ticketRepository, UserRepository userRepository, QrService qrService) {
         this.vehicleRepository = vehicleRepository;
         this.ticketRepository = ticketRepository;
         this.userRepository = userRepository;
+        this.qrService = qrService;
     }
 
     public TicketResponse registerEntry(VehicleEntryRequest request, Authentication authentication) {
@@ -87,12 +89,21 @@ public class TicketService {
 
         ticketRepository.save(ticket);
 
+        //QR
+        String qrUrl = "http://localhost:5173/ticket/" + ticket.getId();
+        // ✔ Generar QR
+        byte[] qrBytes = qrService.generateQr(qrUrl);
+        // ✔ Convertir a Base64 para que el frontend lo muestre
+        String qrBase64 = Base64.getEncoder().encodeToString(qrBytes);
+
         return TicketResponse.builder()
+                .id(ticket.getId())
                 .licensePlate(vehicle.getLicensePlate())
                 .type(vehicle.getType().name())
                 .entryTime(ticket.getEntryTime())
                 .exitTime(ticket.getExitTime())
                 .status(ticket.getStatus().name())
+                .qrBase64(qrBase64)
                 .detalle(ticket.getDetalle())
                 .horas(ticket.getHoras())
                 .totalAmount(ticket.getTotalAmount())
