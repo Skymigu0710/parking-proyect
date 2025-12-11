@@ -5,16 +5,6 @@ export default function ParkingTicket() {
 
 
   const [pagoAdelantado, setPagoAdelantado] = useState(false);
-  
-  const handleCheckboxChange = (event) => {
-    setPagoAdelantado(event.target.checked);
-  };
-
-  const [pagoCamiones, setPagoCamiones] = useState(false);
-  const handleBottomChange = () => {
-    setPagoCamiones(!pagoCamiones)
-  }
-
   const [type, setType] = useState("");
   const [plate, setPlate] = useState("");
   const [color, setColor] = useState("");
@@ -22,40 +12,84 @@ export default function ParkingTicket() {
   const [descuento, setDescuento] = useState("");
   const [detalle, setDetalle] = useState("");
   const [horas, setHoras] = useState('');
+  const [manualAmount, setManualAmount] = useState('');
+  const [isSpecialTicket, setIsSpecialTicket] = useState(false);
+
+  const handleCheckboxChange = (event) => {
+    const checked = event.target.checked;
+    setPagoAdelantado(checked);
+  };
+
+  const [pagoCamiones, setPagoCamiones] = useState(false);
+  const handleBottomChange = () => {
+    setPagoCamiones(!pagoCamiones)
+  }
 
   const handleTicket = async (e) => {
     e.preventDefault();
-
 
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("No se encontró token. El usuario no está autenticado.");
       return;
     }
-    try {
-      const response = await fetch("http://localhost:8080/api/tickets/entry", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          licensePlate: plate,
-          color: color,
-          type: type,
-          spaceCount: spaceCount,
-          pagoAdelantado: pagoAdelantado,
-          horas: pagoAdelantado ? Number(horas) : null,
-          exitTime: pagoAdelantado ? (horas) : null,
-          discountAmount: pagoAdelantado ? Number(descuento) : 0,
-          detalle: detalle
-        })
-      });
-    } catch (error) {
-      console.error(error);
-    }
 
-  }
+    if (isSpecialTicket) {
+      try {
+        const response = await fetch("http://localhost:8080/api/tickets/special", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            licensePlate: plate,
+            color: color,
+            type: type,
+            detalle: detalle,
+            manualAmount: manualAmount
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Error creando ticket especial:", errorData);
+          return;
+        }
+
+        const ticketData = await response.json();
+        console.log("Ticket especial creado:", ticketData);
+
+        // Aquí puedes actualizar estados locales o limpiar inputs si quieres
+      } catch (error) {
+        console.error("Error en la petición:", error);
+      }
+    } else {
+      try {
+        const response = await fetch("http://localhost:8080/api/tickets/entry", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            licensePlate: plate,
+            color: color,
+            type: type,
+            spaceCount: spaceCount,
+            pagoAdelantado: pagoAdelantado,
+            horas: pagoAdelantado ? Number(horas) : null,
+            exitTime: pagoAdelantado ? (horas) : null,
+            discountAmount: pagoAdelantado ? Number(descuento) : 0,
+            detalle: detalle
+          })
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   return (
     <form className="bg-white rounded-xl shadow-md p-4 max-w-sm mx-auto" onSubmit={handleTicket}>
       <h2 className="text-gray-700 font-semibold mb-3">TICKET DE PARKING</h2>
@@ -99,7 +133,10 @@ export default function ParkingTicket() {
       <section className={`flex flex-col w-20 ml-auto pt-2 overflow-hidden transition-all duration-500 ease-in-out ${pagoCamiones ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
         }`}>
         <h1>Espacios</h1>
-        <input type="text" className=" w-full border border-gray-300" />
+        <input type="text"
+          value={spaceCount}
+          onChange={(e) => setSpaceCount(e.target.value)}
+          className=" w-full border border-gray-300" />
       </section>
       <div className="flex items-center gap-2 mb-3">
         {[
@@ -158,9 +195,15 @@ export default function ParkingTicket() {
         <label className="flex items-center gap-2 text-sm text-gray-600 pb-3">
           <input
             type="checkbox"
+            checked={isSpecialTicket}
+            onChange={(e) => setIsSpecialTicket(e.target.checked)}
           />
           Ticket especial
-          <input type="text" placeholder="Monto" className="border border-gray-300 p-1 w-20" />
+          <input type="text"
+            placeholder="Monto"
+            value={manualAmount}
+            onChange={(e) => setManualAmount(e.target.value)}
+            className="border border-gray-300 p-1 w-20" />
         </label>
 
         <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm mt-auto">

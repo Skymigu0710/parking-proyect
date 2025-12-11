@@ -14,4 +14,5 @@ public class VehicleEntryRequest {
     private int horas;
     private String detalle;
     private boolean pagoAdelantado;
+    private double ManualAmount;
 }

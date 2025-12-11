@@ -31,11 +31,10 @@ public class TicketController {
         return ticketService.registerExit(id);
     }
 
-   /* @PostMapping("/special")
-    public TicketResponse registerSpecialTicket(@RequestBody VehicleEntryRequest request,
-                                                @RequestParam double manualAmount) {
-        return ticketService.registerSpecialTicket(request, manualAmount);
-    }*/
+    @PostMapping("/special")
+    public TicketResponse registerSpecialTicket(@RequestBody VehicleEntryRequest request, Authentication authentication) {
+        return ticketService.registerSpecialTicket(request, request.getManualAmount(), authentication);
+    }
 
     @GetMapping("/getTicket")
     public List<TicketResponse> getAllTickets() {

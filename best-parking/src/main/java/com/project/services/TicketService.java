@@ -57,6 +57,7 @@ public class TicketService {
 
         LocalDateTime exit=null;
         Double monto = null;
+        TicketStatus estado = TicketStatus.ACTIVE;
 
         // Si es pago adelantado → calcular monto
         if (request.isPagoAdelantado()) {
@@ -64,15 +65,18 @@ public class TicketService {
                 throw new RuntimeException("Debe ingresar horas si es pago adelantado");
             }
             exit = calcularHoraSalida(entrada, request.getHoras());
-
             monto = calculateFee(vehicle, entrada, exit) - request.getDiscountAmount();
             if (monto < 0) monto = 0.0;
+
+            estado=TicketStatus.CLOSED;
+
         }
+
         Ticket ticket = Ticket.builder()
                 .vehicle(vehicle)
                 .entryTime(LocalDateTime.now())
                 .exitTime(exit)
-                .status(TicketStatus.ACTIVE)
+                .status(estado)
                 .discountAmount(request.getDiscountAmount())
                 .detalle(request.getDetalle())
                 .horas(request.getHoras())
@@ -125,7 +129,9 @@ public class TicketService {
                 .createdBy(ticket.getCreatedBy().getName())
                 .build();
     }
-  /*  public TicketResponse registerSpecialTicket(VehicleEntryRequest request, double manualAmount) {
+    public TicketResponse registerSpecialTicket(VehicleEntryRequest request, double manualAmount, Authentication authentication) {
+        String username = authentication.getName();
+
         Vehicle vehicle = vehicleRepository.findByLicensePlate(request.getLicensePlate().toUpperCase())
                 .orElseGet(() -> vehicleRepository.save(
                         Vehicle.builder()
@@ -137,16 +143,21 @@ public class TicketService {
                 ));
 
         ticketRepository.findByVehicleAndStatus(vehicle, TicketStatus.ACTIVE)
-                .ifPresent(t -> { throw new RuntimeException("Vehicle already has an active ticket."); });
+                .ifPresent(t -> { throw new RuntimeException("Vehicle already tiene un ticket activo."); });
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Ticket ticket = Ticket.builder()
                 .vehicle(vehicle)
                 .entryTime(LocalDateTime.now())
                 .exitTime(LocalDateTime.now())
-                .status(TicketStatus.CLOSED)
+                .status(TicketStatus.CLOSED) // automático
                 .totalAmount(manualAmount)
                 .manualAmount(manualAmount)
                 .specialTicket(true)
+                .detalle(request.getDetalle())
+                .createdBy(user)
                 .build();
 
         ticketRepository.save(ticket);
@@ -158,8 +169,11 @@ public class TicketService {
                 .exitTime(ticket.getExitTime())
                 .totalAmount(ticket.getTotalAmount())
                 .status(ticket.getStatus().name())
+                .detalle(ticket.getDetalle())
+                .createdBy(user.getUsername())
                 .build();
-    }*/
+    }
+
     private double calculateFee(Vehicle v, LocalDateTime entry, LocalDateTime exit) {
         double hours = horas(entry,exit);
 
