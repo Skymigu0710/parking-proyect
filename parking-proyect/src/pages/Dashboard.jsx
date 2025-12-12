@@ -3,6 +3,8 @@ import SubTabs from "../components/SubTabs";
 import { useState } from "react";
 import ParkingTicket from "./ParkingTicket";
 import TableTicket from "./TableTicket";
+import QRScannerPage from "./QRScanner";
+import Graphic from "./Graphic";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("parking");
@@ -17,6 +19,8 @@ export default function Dashboard() {
       <div className="flex-1 overflow-y-auto p-4 bg-gray-200">
         {activeTab === "parking" && <ParkingTicket />}
         {activeTab === "special" && <TableTicket />}
+        {activeTab === "view" && <QRScannerPage />}
+        {activeTab === "graphic" && <Graphic />}
       </div>
     </div>
   );

@@ -5,7 +5,6 @@ import com.project.dto.VehicleEntryRequest;
 import com.project.models.Ticket;
 import com.project.services.QrService;
 import com.project.services.TicketService;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;

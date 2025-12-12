@@ -6,7 +6,7 @@ export default function TableTicket() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    fetch("http://localhost:8080/api/tickets/getTicket", {
+    fetch("http://192.168.18.24:8080/api/tickets/getTicket", {
     headers: {
       "Authorization": `Bearer ${token}`,
       "Content-Type": "application/json"

@@ -48,7 +48,7 @@ public class TicketService {
                                 .build()
                 ));
 
-        // Check if there’s already an active ticket
+        // hay un ticket activo?
         ticketRepository.findByVehicleAndStatus(vehicle, TicketStatus.ACTIVE)
                 .ifPresent(t -> { throw new RuntimeException("Vehicle already has an active ticket."); });
 
@@ -91,9 +91,9 @@ public class TicketService {
 
         //QR
         String qrUrl = "http://localhost:5173/ticket/" + ticket.getId();
-        // ✔ Generar QR
+        // Generar QR
         byte[] qrBytes = qrService.generateQr(qrUrl);
-        // ✔ Convertir a Base64 para que el frontend lo muestre
+        //  Convertir a Base64 para que el frontend lo muestre
         String qrBase64 = Base64.getEncoder().encodeToString(qrBytes);
 
         return TicketResponse.builder()
@@ -173,6 +173,10 @@ public class TicketService {
 
         ticketRepository.save(ticket);
 
+        String qrUrl = "http://192.168.18.24:5173/ticket/" + ticket.getId();
+        byte[] qrBytes = qrService.generateQr(qrUrl);
+        String qrBase64 = Base64.getEncoder().encodeToString(qrBytes);
+
         return TicketResponse.builder()
                 .licensePlate(vehicle.getLicensePlate())
                 .type(vehicle.getType().name())
@@ -180,6 +184,7 @@ public class TicketService {
                 .exitTime(ticket.getExitTime())
                 .totalAmount(ticket.getTotalAmount())
                 .status(ticket.getStatus().name())
+                .qrBase64(qrBase64)
                 .detalle(ticket.getDetalle())
                 .createdBy(user.getUsername())
                 .build();

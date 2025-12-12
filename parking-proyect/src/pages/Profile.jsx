@@ -56,7 +56,7 @@ export default function () {
                 </div>
                 <label className="text-white">Direccion</label>
                 <label className="border rounded-lg p-3 text-white flex justify-between ">{user.direccion}</label>
-                <button  onClick={handleLogout} className="border border-black rounded-lg p-3 bg-black text-white "> Exit </button>
+                <button onClick={handleLogout} className="border border-black rounded-lg p-3 bg-black text-white "> Exit </button>
             </div>
 
         </div>

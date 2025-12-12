@@ -38,7 +38,9 @@ public class SecurityConfig {
       return http.csrf(csrf -> csrf.disable())
                       .cors( cors -> cors.configurationSource(request ->{
                                   var corsConfig = new CorsConfiguration();
-                                  corsConfig.setAllowedOrigins(List.of("http://localhost:5173"));
+                                  corsConfig.setAllowedOrigins(List.of(
+                                          "http://localhost:5173",
+                                          "http://192.168.18.24:5173" )); // <-- tu celular en la red local));
                                   corsConfig.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
                                   corsConfig.setAllowedHeaders(List.of("*"));
                                   return corsConfig;
@@ -49,6 +51,7 @@ public class SecurityConfig {
               .authorizeHttpRequests(auth -> auth
                       .requestMatchers("/api/auth/**").permitAll() // Debe estar permitido
                       .requestMatchers("/api/tickets/**").authenticated()
+                      .requestMatchers("/api/tickets/ingresos/**").authenticated()
                       .requestMatchers("/api/pagos/**").authenticated()
                       .requestMatchers("/api/abonado/**").authenticated()
                       .anyRequest().authenticated()

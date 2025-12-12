@@ -20,7 +20,7 @@ export default function TicketDetail() {
 
         const fetchTicket = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/tickets/${id}`, {
+                const res = await fetch(`http://192.168.18.24:8080/api/tickets/${id}`, {
                     headers: {
                         "Authorization": `Bearer ${token}`,
                         "Content-Type": "application/json",
@@ -56,7 +56,7 @@ export default function TicketDetail() {
 
         try {
             setPagar(true);
-            const res = await fetch(`http://localhost:8080/api/tickets/exit/${id}`, {
+            const res = await fetch(`http://192.168.18.24:8080/api/tickets/exit/${id}`, {
                 method: "PUT",
                 headers: {
                     "Authorization": `Bearer ${token}`,

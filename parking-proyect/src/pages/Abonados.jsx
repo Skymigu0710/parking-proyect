@@ -35,7 +35,7 @@ function Abonados() {
   // Traer abonados desde backend
   const fetchAbonados = async () => {
     try {
-      const res = await fetch("http://localhost:8080/api/abonado/getAbonados", {
+      const res = await fetch("http://192.168.18.24:8080/api/abonado/getAbonados", {
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
@@ -62,7 +62,7 @@ function Abonados() {
       return;
     }
     try {
-      const res = await fetch("http://localhost:8080/api/abonado/register", {
+      const res = await fetch("http://192.168.18.24:8080/api/abonado/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -92,7 +92,7 @@ function Abonados() {
   };
   const afiliar = async (abonadoId) => {
     try {
-      const res = await fetch("http://localhost:8080/api/abonado/afiliar", {
+      const res = await fetch("http://192.168.18.24:8080/api/abonado/afiliar", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -116,7 +116,7 @@ function Abonados() {
   const desafiliar = async (abonadoId) => {
     try {
       const res = await fetch(
-        `http://localhost:8080/api/abonado/desafiliar/${abonadoId}`,
+        `http://192.168.18.24:8080/api/abonado/desafiliar/${abonadoId}`,
         {
           method: "POST",
           headers: {

@@ -15,6 +15,11 @@ export default function ParkingTicket() {
   const [horas, setHoras] = useState('');
   const [manualAmount, setManualAmount] = useState('');
   const [isSpecialTicket, setIsSpecialTicket] = useState(false);
+  const [ticketGenerado, setTicketGenerado] = useState(null);
+  const ticketRef = useRef();
+
+
+
   const handleCheckboxChange = (event) => {
     const checked = event.target.checked;
     setPagoAdelantado(checked);
@@ -23,6 +28,18 @@ export default function ParkingTicket() {
   const handleBottomChange = () => {
     setPagoCamiones(!pagoCamiones)
   }
+  const resetForm = () => {
+    setPlate("");
+    setColor("");
+    setType("");
+    setSpaceCount("");
+    setPagoAdelantado(false);
+    setHoras("");
+    setDescuento("");
+    setDetalle("");
+    setIsSpecialTicket(false);
+    setManualAmount("");
+  };
 
   const handleTicket = async (e) => {
     e.preventDefault();
@@ -32,73 +49,97 @@ export default function ParkingTicket() {
       return;
     }
 
-    if (isSpecialTicket) {
-      try {
-        const response = await fetch("http://localhost:8080/api/tickets/special", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            licensePlate: plate,
-            color: color,
-            type: type,
-            detalle: detalle,
-            manualAmount: manualAmount
-          })
-        });
+    let ticketData = null;
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error("Error creando ticket especial:", errorData);
-          return;
+    try {
+      const url = isSpecialTicket
+        ? "http://192.168.18.24:8080/api/tickets/special"
+        : "http://192.168.18.24:8080/api/tickets/entry";
+
+      const body = isSpecialTicket
+        ? {
+          licensePlate: plate,
+          color: color,
+          type: type,
+          detalle: detalle,
+          manualAmount: manualAmount
         }
+        : {
+          licensePlate: plate,
+          color: color,
+          type: type,
+          spaceCount: spaceCount,
+          pagoAdelantado: pagoAdelantado,
+          horas: pagoAdelantado ? Number(horas) : null,
+          exitTime: pagoAdelantado ? horas : null,
+          discountAmount: pagoAdelantado ? Number(descuento) : 0,
+          detalle: detalle
+        };
 
-        const ticketData = await response.json();
-        console.log("Ticket especial creado:", ticketData);
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
 
-        // Aquí puedes actualizar estados locales o limpiar inputs si quieres
-      } catch (error) {
-        console.error("Error en la petición:", error);
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error creando ticket:", errorData);
+        return;
       }
-    } else {
-      try {
-        const response = await fetch("http://localhost:8080/api/tickets/entry", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            licensePlate: plate,
-            color: color,
-            type: type,
-            spaceCount: spaceCount,
-            pagoAdelantado: pagoAdelantado,
-            horas: pagoAdelantado ? Number(horas) : null,
-            exitTime: pagoAdelantado ? (horas) : null,
-            discountAmount: pagoAdelantado ? Number(descuento) : 0,
-            detalle: detalle
-          })
-        });
-        const ticketData = await response.json();
-        console.log("Ticket normal creado:", ticketData);
 
-        // Guarda el ticket para mostrar QR
-        setTicketGenerado(ticketData);
+      ticketData = await response.json();
+      console.log("Ticket creado:", ticketData);
 
-      } catch (error) {
-        console.error(error);
-      }
+      // Guardamos el ticket para el preview (y el QR)
+      setTicketGenerado(ticketData);
+
+      // Imprimir ticket automáticamente
+      setTimeout(() => {
+        if (ticketRef.current) {
+          const printContents = ticketRef.current.innerHTML;
+          const printWindow = window.open('', '', 'width=300,height=600');
+          printWindow.document.write(`
+          <html>
+            <head>
+              <title>Ticket</title>
+              <style>
+                @media print {
+                  @page { margin: 0; size: 80mm auto; }
+                  body { margin: 0; padding: 5mm; font-family: monospace; }
+                }
+                body { font-family: monospace; margin: 0; padding: 5px; width: 80mm; }
+              </style>
+            </head>
+            <body>${printContents}</body>
+          </html>
+        `);
+          printWindow.document.close();
+          printWindow.focus();
+          printWindow.print();
+          printWindow.close();
+
+          // Limpiar formulario después de imprimir
+          resetForm();
+          setTicketGenerado(null); // ocultar TicketPreview
+        }
+      }, 300);
+
+    } catch (error) {
+      console.error("Error en la petición:", error);
     }
   };
+
+
 
   return (
 
     <>
 
-      <form className="bg-white rounded-xl shadow-md p-4 max-w-sm mx-auto" onSubmit={handleTicket}>
+      <form id="ticketForm" className="bg-white rounded-xl shadow-md p-4 max-w-sm mx-auto" onSubmit={handleTicket}>
         <h2 className="text-gray-700 font-semibold mb-3">TICKET DE PARKING</h2>
         <div className="flex justify-between">
           <div className="h-auto">
@@ -218,7 +259,12 @@ export default function ParkingTicket() {
           </button>
         </div>
       </form>
-    
+      {ticketGenerado && (
+        <div style={{ display: "none" }}>
+          <TicketPreview ref={ticketRef} ticket={ticketGenerado} />
+        </div>
+      )}
+
     </>
   )
 }

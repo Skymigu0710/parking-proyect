@@ -19,7 +19,7 @@ export default function Profile() {
         // Llamada al backend
         const fetchAbonado = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/abonado/${id}`, {
+                const res = await fetch(`http://192.168.18.24:8080/api/abonado/${id}`, {
                     headers: {
                         "Authorization": `Bearer ${token}`,
                         "Content-Type": "application/json",
@@ -94,7 +94,7 @@ export default function Profile() {
     try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch(`http://localhost:8080/api/pagos/confirmar/${pagoId}`, {
+        const res = await fetch(`http://192.168.18.24:8080/api/pagos/confirmar/${pagoId}`, {
             method: "PUT",
             headers: {
                 "Authorization": `Bearer ${token}`,

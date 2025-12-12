@@ -5,6 +5,7 @@ export default function SubTabs({ activeTab, setActiveTab }) {
     { id: "parking", icon: <LayoutDashboard /> },
     { id: "special", icon: <MessageCircle /> },
     { id: "view", icon: <Eye /> },
+    { id: "graphic", icon: <Eye /> },
   ];
 
   return (
@@ -13,11 +14,10 @@ export default function SubTabs({ activeTab, setActiveTab }) {
         <button
           key={tab.id}
           onClick={() => setActiveTab(tab.id)}
-          className={`p-2 rounded-full ${
-            activeTab === tab.id
+          className={`p-2 rounded-full ${activeTab === tab.id
               ? "bg-black text-white"
               : "bg-white text-gray-500"
-          }`}
+            }`}
         >
           {tab.icon}
         </button>
