@@ -11,8 +11,10 @@ import com.project.repositories.TicketRepository;
 import com.project.repositories.VehicleRepository;
 import com.project.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -154,8 +156,11 @@ public class TicketService {
                 ));
 
         ticketRepository.findByVehicleAndStatus(vehicle, TicketStatus.ACTIVE)
-                .ifPresent(t -> { throw new RuntimeException("Vehicle already tiene un ticket activo."); });
-
+                .ifPresent(t -> {
+                    throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST, "El vehículo ya tiene un ticket activo."
+                    );
+                });
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 

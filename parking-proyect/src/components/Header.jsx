@@ -1,9 +1,11 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Ticket,CircleUserRound, Users } from "lucide-react";
+import { Ticket, CircleUserRound, Users } from "lucide-react";
+import { getUserFromToken } from "../utils/auth";
 
 export default function Header() {
   const location = useLocation();
+  const user = getUserFromToken();
 
   const isActive = (path) =>
     location.pathname === path
@@ -23,22 +25,23 @@ export default function Header() {
         >
           <Ticket />
         </Link>
-
-        <Link
-          to="/abonados"
-          className={`flex justify-center items-center px-5 py-2 text-sm font-semibold transition-colors ${isActive(
-            "/abonados"
-          )}`}
-        >
-          <Users />
-        </Link>
+        {user?.role === "ADMIN" && (
+          <Link
+            to="/abonados"
+            className={`flex justify-center items-center px-5 py-2 text-sm font-semibold transition-colors ${isActive(
+              "/abonados"
+            )}`}
+          >
+            <Users />
+          </Link>
+        )}
         <Link
           to="/profile"
           className={`flex justify-center items-center px-5 py-2 text-sm font-semibold transition-colors ${isActive(
             "/profile"
           )}`}
         >
-         <CircleUserRound size={29}  />
+          <CircleUserRound size={29} />
         </Link>
       </nav>
     </header>

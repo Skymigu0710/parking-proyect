@@ -53,6 +53,7 @@ public class TicketController {
                 .id(ticket.getId())
                 .licensePlate(ticket.getVehicle().getLicensePlate())
                 .type(ticket.getVehicle().getType().name())
+                .color(ticket.getVehicle().getColor())
                 .entryTime(ticket.getEntryTime())
                 .exitTime(ticket.getExitTime())
                 .totalAmount(ticket.getTotalAmount())

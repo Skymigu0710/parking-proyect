@@ -51,9 +51,9 @@ public class SecurityConfig {
               .authorizeHttpRequests(auth -> auth
                       .requestMatchers("/api/auth/**").permitAll() // Debe estar permitido
                       .requestMatchers("/api/tickets/**").authenticated()
-                      .requestMatchers("/api/tickets/ingresos/**").authenticated()
-                      .requestMatchers("/api/pagos/**").authenticated()
-                      .requestMatchers("/api/abonado/**").authenticated()
+                      .requestMatchers("/api/tickets/ingresos/**").hasRole("ADMIN")
+                      .requestMatchers("/api/pagos/**").hasRole("ADMIN")
+                      .requestMatchers("/api/abonado/**").hasRole("ADMIN")
                       .anyRequest().authenticated()
               )
               .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

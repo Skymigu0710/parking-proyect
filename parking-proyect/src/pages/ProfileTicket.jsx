@@ -86,7 +86,7 @@ export default function TicketDetail() {
     if (error) {
         return (
             <div className="max-w-md mx-auto mt-8 p-6 bg-red-100 text-red-700 rounded-lg shadow-md">
-                <h2 className="text-lg font-bold mb-2">❌ Error</h2>
+                <h2 className="text-lg font-bold mb-2">Error</h2>
                 <p>{error}</p>
                 <div className="flex justify-end mt-4">
                     <button
@@ -114,6 +114,7 @@ export default function TicketDetail() {
                     <p><strong>ID:</strong> {ticket.id}</p>
                     <p><strong>Placa:</strong> {ticket.licensePlate}</p>
                     <p><strong>Tipo:</strong> {ticket.type}</p>
+                    <p><strong>Color:</strong> {ticket.color}</p>
                     <p><strong>Hora de ingreso:</strong> {ticket.entryTime}</p>
                     <p><strong>Hora de salida:</strong> {ticket.exitTime ?? "En curso"}</p>
                     <p><strong>Monto total:</strong> {ticket.totalAmount ?? "—"}</p>

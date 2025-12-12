@@ -20,4 +20,5 @@ public class TicketResponse {
     private int horas;
     private String createdBy;
     private String qrBase64;
+    private String color;
 }

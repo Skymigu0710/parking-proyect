@@ -17,14 +17,16 @@ export default function ParkingTicket() {
   const [isSpecialTicket, setIsSpecialTicket] = useState(false);
   const [ticketGenerado, setTicketGenerado] = useState(null);
   const ticketRef = useRef();
+  const [pagoCamiones, setPagoCamiones] = useState(false);
+  const [errorBackend, setErrorBackend] = useState(null);
+  const [showError, setShowError] = useState(false);
 
-
-
+  //cambios
   const handleCheckboxChange = (event) => {
     const checked = event.target.checked;
     setPagoAdelantado(checked);
   };
-  const [pagoCamiones, setPagoCamiones] = useState(false);
+
   const handleBottomChange = () => {
     setPagoCamiones(!pagoCamiones)
   }
@@ -41,8 +43,19 @@ export default function ParkingTicket() {
     setManualAmount("");
   };
 
+  const handleConvertText = (e) => {
+    let value = e.target.value.toUpperCase(); // mayus
+    value = value.replace(/[^A-Z0-9]/g, "");
+    if (value.length > 3) {
+      value = value.slice(0, 3) + "-" + value.slice(3, 7); //guion
+    }
+    setPlate(value);
+  };
+  //funciones de enpoints
+
   const handleTicket = async (e) => {
     e.preventDefault();
+
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("No se encontró token. El usuario no está autenticado.");
@@ -86,10 +99,18 @@ export default function ParkingTicket() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error creando ticket:", errorData);
+        if (response.status === 403) {
+          setErrorBackend("El vehículo ya tiene un ticket activo.");
+        } else {
+
+          const errorMessage = await response.text();
+          setErrorBackend(errorMessage || "Error desconocido");
+        }
+        setShowError(true);
+        setTimeout(() => setShowError(false), 2000);
         return;
       }
+
 
       ticketData = await response.json();
       console.log("Ticket creado:", ticketData);
@@ -130,11 +151,9 @@ export default function ParkingTicket() {
 
     } catch (error) {
       console.error("Error en la petición:", error);
+
     }
   };
-
-
-
   return (
 
     <>
@@ -147,7 +166,7 @@ export default function ParkingTicket() {
             <input
               type="text"
               value={plate}
-              onChange={(e) => setPlate(e.target.value)}
+              onChange={handleConvertText}
               className="w-auto border border-gray-300 rounded-lg p-2 mt-1 mb-3 text-sm"
               placeholder="Ingrese la placa"
             />
@@ -195,7 +214,7 @@ export default function ParkingTicket() {
           ].map((c) => (
             <div
               key={c.value}
-              onClick={() => setColor(c.value)}
+              onClick={() => setColor(c.name)}
               style={{ backgroundColor: c.value }}
               className={`w-5 h-5 rounded-full cursor-pointer border border-gray-300 transition-transform duration-150 ${color === c.value ? "ring-2 ring-white scale-110" : ""
                 }`}
@@ -254,17 +273,23 @@ export default function ParkingTicket() {
               className="border border-gray-300 p-1 w-20" />
           </label>
 
-          <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm mt-auto">
+          <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm mt-auto
+            cursor-pointer hover:bg-green-700 active:bg-green-800 transition-colors duration-200">
             TICKET
           </button>
         </div>
+
       </form>
       {ticketGenerado && (
         <div style={{ display: "none" }}>
           <TicketPreview ref={ticketRef} ticket={ticketGenerado} />
         </div>
       )}
-
+      {showError && errorBackend && (
+        <div className="fixed top-1/3 left-1/2 bg-black text-white px-4 py-2 rounded shadow-lg z-50 -translate-x-1/2">
+          {errorBackend}
+        </div>
+      )}
     </>
   )
 }

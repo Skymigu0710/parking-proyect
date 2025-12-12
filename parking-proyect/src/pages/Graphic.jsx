@@ -43,31 +43,32 @@ const DailyGraphic = () => {
   }, [fechaInicio, fechaFin]); // Refresca cada vez que cambie el rango
 
   return (
-    <div>
-      <h2>Ingresos diarios</h2>
+    <div className="bg-white rounded-xl shadow-md p-4 mx-auto my-auto h-full">
+      <h2>INGRESOS DIARIOS</h2>
 
       {/* Selección de fechas */}
-      <div style={{ marginBottom: "10px" }}>
-        <label>
+      <div className="flex flex-wrap gap-4 mt-4 mb-4" >
+        <label className="flex flex-col">
           Desde:{" "}
           <input
             type="date"
+            className="border-b-1 border-gray-400 p-1"
             value={fechaInicio}
             onChange={(e) => setFechaInicio(e.target.value)}
           />
         </label>
-        <label style={{ marginLeft: "20px" }}>
+        <label className="flex flex-col">
           Hasta:{" "}
           <input
             type="date"
+            className="border-b-1 border-gray-400 p-1"
             value={fechaFin}
             onChange={(e) => setFechaFin(e.target.value)}
           />
         </label>
       </div>
-
       {/* Contenedor con scroll horizontal si hay muchas fechas */}
-      <div style={{ width: "100%", overflowX: "auto" }}>
+      <div className="w-full overflow-x-auto">
         <ResponsiveContainer width={Math.max(data.length * 50, 800)} height={400}>
           <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
